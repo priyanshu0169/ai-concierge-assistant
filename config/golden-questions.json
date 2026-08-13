@@ -1,0 +1,132 @@
+[
+  {
+    "question": "What kinds of caviar do you sell?",
+    "expectedText": ["Kaluga", "Sevruga", "Hackleback"],
+    "note": "Discovery. The question type that Step 1 fixed at the orchestration level; this pins the retrieval half."
+  },
+  {
+    "question": "What are the different types of caviar?",
+    "expectedText": ["Kaluga", "Sevruga", "Paddlefish"],
+    "note": "Same intent, different wording. All top hits come from one comprehensive page, so this is the question MAX_PER_SOURCE hurts most."
+  },
+  {
+    "question": "What truffle products do you have?",
+    "expectedText": ["truffle oil"],
+    "note": "Discovery over a category whose answer is spread across several product pages rather than one page."
+  },
+  {
+    "question": "What mushrooms do you sell?",
+    "expectedText": ["morel"],
+    "note": "Discovery. Deliberately uses the customer's word 'sell' rather than the site's category label."
+  },
+  {
+    "question": "What is Beluga caviar?",
+    "expectedText": ["Huso huso"],
+    "note": "Educational, and the strongest-scoring class today. Expects the species name, not just the word Beluga, so a listing page does not count as an answer."
+  },
+  {
+    "question": "What is the history of caviar?",
+    "expectedText": ["khavyar", "Achaemenid"],
+    "note": "Deep in a long page. Both expected strings occur exactly once in the whole corpus, so this fails unless that specific chunk is retrieved."
+  },
+  {
+    "question": "What is the difference between caviar and fish roe?",
+    "expectedText": ["Acipenseridae"],
+    "note": "The distinguishing fact is a family name appearing twice corpus-wide. A generic caviar chunk must not be allowed to pass this."
+  },
+  {
+    "question": "How should caviar be served?",
+    "expectedText": ["mother of pearl", "crushed ice"],
+    "note": "Usage. This is the question that answered, refused, then answered again in manual testing; the benchmark exists so that is a number rather than an anecdote."
+  },
+  {
+    "question": "How long does caviar keep once opened?",
+    "expectedText": ["refrigerat"],
+    "note": "Usage, phrased as a customer would rather than as the page does."
+  },
+  {
+    "question": "What is Malossol caviar?",
+    "expectedText": ["Malossol"],
+    "note": "A term of art a customer would meet on the site and have to look up."
+  },
+  {
+    "question": "Is your caviar kosher?",
+    "expectedText": ["kosher"],
+    "note": "Attribute question with a dedicated page, so a failure here would indicate a ranking problem rather than a coverage one."
+  },
+  {
+    "question": "Do you sell blinis?",
+    "expectedText": ["blini"],
+    "note": "Simple product existence, in the customer's spelling."
+  },
+  {
+    "question": "Tell me about white truffles from Alba",
+    "expectedText": ["Tuber magnatum", "Alba truffle"],
+    "note": "Origin/provenance. The label was 'Alba', which matched as a *substring* of 'Albacore' and 'Albariño' - 25 of 47 matching chunks were tuna or wine, inflating precision. Labels are matched by substring so stems like 'refrigerat' keep working, which means a short label must be distinctive on its own."
+  },
+  {
+    "question": "How does Kaluga compare with Beluga?",
+    "expectedText": ["Kaluga"],
+    "note": "Comparison. Both sides of the comparison live on separate pages, so a per-source cap of 2 is a real constraint here."
+  },
+  {
+    "question": "Which caviar would suit someone trying it for the first time?",
+    "expectedText": ["Paddlefish", "Hackleback", "beginner"],
+    "note": "Advisory. Deliberately avoids every word the site uses, to test vocabulary mismatch."
+  },
+  {
+    "question": "When was Marky's founded?",
+    "expectedText": ["1983"],
+    "note": "Company fact. Known to be buried in a 2,100-character chunk on a product page and to rank below 200 today. Expected to fail until chunking is fixed - that is the point of recording it."
+  },
+  {
+    "question": "Where are you located?",
+    "expectedText": ["Miami"],
+    "note": "Company fact present in 31 chunks as an incidental clause and retrievable by none of them. Measured as answerable because the information is genuinely in the corpus."
+  },
+  {
+    "question": "Do you have a physical shop I can visit?",
+    "expectedText": ["Miami", "New York"],
+    "note": "Same underlying fact, different phrasing, to check whether one wording happens to work while another does not."
+  },
+  {
+    "question": "How do I store foie gras?",
+    "expectedText": ["refrigerat"],
+    "note": "Usage on a non-caviar category, so the benchmark is not entirely about one product line."
+  },
+  {
+    "question": "What is your return policy?",
+    "expectedUrls": ["return-and-consumer-safety-policy"],
+    "note": "Content confirmed live at /return-and-consumer-safety-policy but never crawled. Expected to fail until Tier 3; kept answerable so the coverage gap stays visible. Labelled by URL, with no text label at all: the previous label was the bare word 'return', which a gift-card page's 'DELIVERY & RETURNS' footer badge satisfied once heading paths were restored - a false pass that made Tier 2a look like a recall win. Only the real policy page counts. Note that expectedUrls and expectedText are OR-ed, so adding a text label here would loosen this again."
+  },
+  {
+    "question": "Do you ship internationally?",
+    "expectedText": ["ship internationally", "international shipping"],
+    "note": "Same coverage gap. Tightened from the bare word 'international' to a phrase: the single word is one noisy product mention away from a false pass, and this question must stay honest about the gap until the shipping content is crawled."
+  },
+  {
+    "question": "How long does delivery take?",
+    "expectedText": ["business day"],
+    "note": "Expects a delivery window, so a product page merely containing the word shipping cannot pass."
+  },
+  {
+    "question": "What is today's Bitcoin price?",
+    "unanswerable": true,
+    "note": "Off-domain and unambiguously outside any store corpus. Anything retrieved above the floor is an opportunity for the model to be confidently wrong."
+  },
+  {
+    "question": "Who won the FIFA World Cup?",
+    "unanswerable": true,
+    "note": "Off-domain, and the kind of question a bored customer actually asks."
+  },
+  {
+    "question": "Who is the chief executive of the company?",
+    "unanswerable": true,
+    "note": "Plausible, store-shaped and absent. The dangerous kind of unanswerable, because a model will happily invent a name."
+  },
+  {
+    "question": "Can you tell me my order status?",
+    "unanswerable": true,
+    "note": "Answerable in principle, but never from the knowledge base - it needs the live commerce tools. Retrieval must return nothing."
+  }
+]

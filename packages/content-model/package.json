@@ -1,0 +1,22 @@
+{
+  "name": "@shopsage/content-model",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The ContentSource port and the canonical Document every content source emits. Contains no source implementation.",
+  "license": "UNLICENSED",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "dependencies": {
+    "@shopsage/platform": "*",
+    "zod": "^3.23.8"
+  }
+}

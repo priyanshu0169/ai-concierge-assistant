@@ -1,0 +1,22 @@
+.git
+.gitignore
+node_modules
+**/node_modules
+# Tests run on the host and, in development, through the bind-mounted source.
+# They are never needed inside a built image.
+**/test
+docs
+coverage
+dist
+build
+*.log
+*.md
+!README.md
+.env
+.env.*
+!.env.example
+.qdrant
+.tei-cache
+.idea
+.vscode
+docker-compose*.yml

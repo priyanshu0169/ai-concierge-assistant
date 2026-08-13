@@ -1,0 +1,22 @@
+{
+  "name": "@shopsage/assistant-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The domain: conversation, retrieval orchestration, prompts, tools, answer formatting. No HTTP, no framework, no vendor SDK.",
+  "license": "UNLICENSED",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "dependencies": {
+    "@shopsage/llm-client": "*",
+    "@shopsage/platform": "*"
+  }
+}

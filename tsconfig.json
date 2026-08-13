@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"],
+
+    /* This project ships JavaScript. TypeScript is used only as a type
+       checker over JSDoc annotations - it never emits output and there is no
+       build step for the backend packages. See docs/adr/0002. */
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+
+    "strict": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "eslint.config.js",
+    "packages/*/src/**/*.js",
+    "packages/*/src/**/*.d.ts",
+    "packages/*/test/**/*.js"
+  ],
+  /* The widget is browser code and is checked by packages/widget/tsconfig.json, which adds
+     the DOM library. Kept separate on purpose: adding "DOM" here would make `window` and
+     `document` valid names in every backend package, so a stray browser reference in Node
+     code would type-check instead of failing. */
+  "exclude": ["**/node_modules", "**/dist", "**/coverage", "packages/widget"]
+}

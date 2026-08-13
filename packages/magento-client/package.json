@@ -1,0 +1,24 @@
+{
+  "name": "@shopsage/magento-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Commerce data over HTTP, behind the domain's CommerceCatalogue port. The only package that knows the connector wire format.",
+  "license": "UNLICENSED",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "reference"
+  ],
+  "scripts": {
+    "reference": "node reference/server.js",
+    "test": "node --test test/"
+  },
+  "dependencies": {
+    "@shopsage/assistant-core": "*",
+    "@shopsage/platform": "*"
+  }
+}

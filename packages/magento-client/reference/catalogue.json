@@ -1,0 +1,121 @@
+{
+  "$comment": "Fixture catalogue for the reference connector. Fictional store, fictional products. Prices are pre-formatted because the contract says the connector formats them, not ShopSage.",
+  "currency": "GBP",
+  "products": [
+    {
+      "sku": "TS-ORG-BLK-M",
+      "name": "Organic cotton t-shirt, black, medium",
+      "url": "https://store.example.com/p/organic-cotton-t-shirt-black-m",
+      "imageUrl": "https://store.example.com/media/ts-org-blk.jpg",
+      "price": { "formatted": "£24.00", "amount": "24.00", "currency": "GBP", "taxIncluded": true },
+      "availability": "in_stock",
+      "summary": "Heavyweight organic cotton, ethically sourced, pre-shrunk.",
+      "keywords": ["t-shirt", "tshirt", "tee", "cotton", "organic", "black", "top"]
+    },
+    {
+      "sku": "TS-ORG-WHT-M",
+      "name": "Organic cotton t-shirt, white, medium",
+      "url": "https://store.example.com/p/organic-cotton-t-shirt-white-m",
+      "imageUrl": "https://store.example.com/media/ts-org-wht.jpg",
+      "price": { "formatted": "£24.00", "amount": "24.00", "currency": "GBP", "taxIncluded": true },
+      "availability": "in_stock",
+      "summary": "Heavyweight organic cotton, ethically sourced, pre-shrunk.",
+      "keywords": ["t-shirt", "tshirt", "tee", "cotton", "organic", "white", "top"]
+    },
+    {
+      "sku": "TS-ORG-BLK-L",
+      "name": "Organic cotton t-shirt, black, large",
+      "url": "https://store.example.com/p/organic-cotton-t-shirt-black-l",
+      "price": { "formatted": "£24.00", "amount": "24.00", "currency": "GBP", "taxIncluded": true },
+      "availability": "out_of_stock",
+      "summary": "Heavyweight organic cotton, ethically sourced, pre-shrunk.",
+      "keywords": ["t-shirt", "tshirt", "tee", "cotton", "organic", "black", "top", "large"]
+    },
+    {
+      "sku": "HD-MRN-NVY-L",
+      "name": "Merino wool hoodie, navy, large",
+      "url": "https://store.example.com/p/merino-hoodie-navy-l",
+      "imageUrl": "https://store.example.com/media/hd-mrn-nvy.jpg",
+      "price": { "formatted": "£89.00", "amount": "89.00", "currency": "GBP", "taxIncluded": true },
+      "availability": "in_stock",
+      "summary": "Mid-weight merino, breathable, machine washable at 30 degrees.",
+      "keywords": ["hoodie", "hooded", "merino", "wool", "navy", "jumper", "sweatshirt", "warm"]
+    },
+    {
+      "sku": "HD-CTN-GRY-M",
+      "name": "Brushed cotton hoodie, grey, medium",
+      "url": "https://store.example.com/p/brushed-cotton-hoodie-grey-m",
+      "price": { "formatted": "£45.00", "amount": "45.00", "currency": "GBP", "taxIncluded": true },
+      "availability": "backorder",
+      "summary": "Brushed cotton inner, ribbed cuffs. Expected back in three weeks.",
+      "keywords": ["hoodie", "hooded", "cotton", "grey", "jumper", "sweatshirt", "warm"]
+    },
+    {
+      "sku": "SK-WL-CHR-2P",
+      "name": "Wool walking socks, charcoal, two pairs",
+      "url": "https://store.example.com/p/wool-walking-socks-charcoal",
+      "price": { "formatted": "£16.50", "amount": "16.50", "currency": "GBP", "taxIncluded": true },
+      "availability": "in_stock",
+      "summary": "Cushioned sole, reinforced heel. Two pairs per pack.",
+      "keywords": ["socks", "wool", "walking", "hiking", "charcoal", "grey"]
+    },
+    {
+      "sku": "BT-LTH-BRN-9",
+      "name": "Leather walking boots, brown, size 9",
+      "url": "https://store.example.com/p/leather-walking-boots-brown-9",
+      "imageUrl": "https://store.example.com/media/bt-lth-brn.jpg",
+      "price": {
+        "formatted": "£165.00",
+        "amount": "165.00",
+        "currency": "GBP",
+        "taxIncluded": true
+      },
+      "availability": "in_stock",
+      "summary": "Full-grain leather, waterproof membrane, resoleable.",
+      "keywords": ["boots", "boot", "leather", "walking", "hiking", "waterproof", "brown", "shoes"]
+    },
+    {
+      "sku": "JK-WPF-GRN-M",
+      "name": "Waterproof shell jacket, green, medium",
+      "url": "https://store.example.com/p/waterproof-shell-jacket-green-m",
+      "price": {
+        "formatted": "£120.00",
+        "amount": "120.00",
+        "currency": "GBP",
+        "taxIncluded": true
+      },
+      "availability": "in_stock",
+      "summary": "Three-layer shell, taped seams, packs into its own pocket.",
+      "keywords": ["jacket", "coat", "waterproof", "shell", "rain", "green", "outerwear"]
+    }
+  ],
+  "categories": [
+    { "id": "tops", "name": "Tops", "url": "https://store.example.com/c/tops" },
+    { "id": "outerwear", "name": "Outerwear", "url": "https://store.example.com/c/outerwear" },
+    { "id": "footwear", "name": "Footwear", "url": "https://store.example.com/c/footwear" }
+  ],
+  "$ordersComment": "Keyed by the pseudonymous `sub` the session token carries. The connector resolves identity; ShopSage never does. Deliberately carries no address, email, phone or payment detail.",
+  "orders": {
+    "ps_reference_customer": [
+      {
+        "reference": "000001234",
+        "placedAt": "2026-07-28T09:14:00Z",
+        "status": "shipped",
+        "statusLabel": "Shipped",
+        "estimatedDelivery": "2026-08-05",
+        "trackingUrl": "https://carrier.example.com/track/XYZ123",
+        "items": [
+          { "sku": "TS-ORG-BLK-M", "name": "Organic cotton t-shirt, black, medium", "quantity": 2 }
+        ]
+      },
+      {
+        "reference": "000001199",
+        "placedAt": "2026-07-02T16:40:00Z",
+        "status": "delivered",
+        "statusLabel": "Delivered",
+        "estimatedDelivery": "2026-07-05",
+        "items": [{ "sku": "SK-WL-CHR-2P", "name": "Wool walking socks, charcoal", "quantity": 1 }]
+      }
+    ]
+  }
+}

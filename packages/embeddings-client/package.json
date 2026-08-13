@@ -1,0 +1,22 @@
+{
+  "name": "@shopsage/embeddings-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Embedding generation against a self-hosted HuggingFace Text Embeddings Inference service. Never calls a paid embedding API.",
+  "license": "UNLICENSED",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "dependencies": {
+    "@shopsage/platform": "*",
+    "zod": "^3.23.8"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@shopsage/session-token",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Verifies Magento-issued assistant session tokens. Holds no private key and issues nothing.",
+  "license": "UNLICENSED",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "dependencies": {
+    "@shopsage/platform": "*"
+  }
+}

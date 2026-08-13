@@ -1,0 +1,28 @@
+{
+  "name": "@shopsage/ingestion",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Chunk, embed and store documents from any ContentSource. Idempotent by content hash.",
+  "license": "UNLICENSED",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --test test/",
+    "ingest": "node src/cli/ingest.js",
+    "evaluate": "node src/cli/evaluate.js"
+  },
+  "dependencies": {
+    "@shopsage/assistant-core": "*",
+    "@shopsage/content-model": "*",
+    "@shopsage/embeddings-client": "*",
+    "@shopsage/platform": "*",
+    "@shopsage/scraper": "*",
+    "@shopsage/vector-repository": "*"
+  }
+}

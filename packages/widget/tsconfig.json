@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    /* The one place in the repository where DOM globals are in scope. `node` stays too,
+       because the tests run under `node:test` even though the source runs in a browser. */
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "types": ["node"]
+  },
+  "include": ["src/**/*.js", "test/**/*.js", "build.js"],
+  "exclude": ["dist", "node_modules"]
+}

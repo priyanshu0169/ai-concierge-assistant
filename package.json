@@ -1,0 +1,47 @@
+{
+  "name": "shopsage",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "ShopSage - a reusable, configuration-driven AI shopping assistant platform for Magento Commerce.",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22.11.0",
+    "npm": ">=10.0.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "start": "node --env-file-if-exists=.env packages/rag-backend/src/server.js",
+    "dev": "node --env-file-if-exists=.env --watch packages/rag-backend/src/server.js",
+    "ingest": "node --env-file-if-exists=.env packages/ingestion/src/cli/ingest.js",
+    "evaluate": "node --env-file-if-exists=.env packages/ingestion/src/cli/evaluate.js",
+    "preview": "node --env-file-if-exists=.env packages/scraper/src/cli/preview.js",
+    "test": "node --test \"packages/*/test/**/*.test.js\"",
+    "test:watch": "node --test --watch \"packages/*/test/**/*.test.js\"",
+    "test:coverage": "node --test --experimental-test-coverage \"packages/*/test/**/*.test.js\"",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p packages/widget",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "verify": "npm run format:check && npm run lint && npm run typecheck && npm test",
+    "docker:up": "docker compose up --build",
+    "docker:up:prod": "docker compose -f docker-compose.yml up --build",
+    "docker:down": "docker compose down",
+    "docker:reset": "docker compose down -v",
+    "docker:logs": "docker compose logs -f shopsage-backend"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.9.0",
+    "esbuild": "^0.28.1",
+    "eslint": "^9.15.0",
+    "globals": "^15.12.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  }
+}

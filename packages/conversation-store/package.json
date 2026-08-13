@@ -1,0 +1,22 @@
+{
+  "name": "@shopsage/conversation-store",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Durable conversation history behind the domain's ConversationStore port. Redis is an implementation detail that must not leak.",
+  "license": "UNLICENSED",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "dependencies": {
+    "@redis/client": "^5.5.6",
+    "@shopsage/platform": "*"
+  }
+}

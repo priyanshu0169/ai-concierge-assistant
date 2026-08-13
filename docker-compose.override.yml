@@ -1,0 +1,23 @@
+# ---------------------------------------------------------------------------
+# Local development overrides.
+#
+# Applied automatically by `docker compose up`. Bind-mounts the source tree and
+# runs Node's file watcher, so a code change restarts the process without a
+# rebuild.
+#
+# Only ./packages and ./config are mounted - /app/node_modules stays as built
+# in the image. Mounting the repository root would shadow it and break the
+# workspace symlinks.
+# ---------------------------------------------------------------------------
+services:
+  shopsage-backend:
+    build:
+      target: development
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+      LOG_FORMAT: pretty
+    command: ['node', '--watch', 'packages/rag-backend/src/server.js']
+    volumes:
+      - ./packages:/app/packages
+      - ./config:/app/config

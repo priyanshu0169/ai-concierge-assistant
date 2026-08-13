@@ -1,0 +1,22 @@
+{
+  "name": "@shopsage/vector-repository",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Vector storage behind a port. Qdrant is an implementation detail that must not leak.",
+  "license": "UNLICENSED",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --test test/"
+  },
+  "dependencies": {
+    "@shopsage/platform": "*",
+    "zod": "^3.23.8"
+  }
+}

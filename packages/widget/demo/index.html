@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ShopSage widget — integration demo</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 46rem;
+        margin: 3rem auto;
+        padding: 0 1.5rem;
+        line-height: 1.6;
+        color: #1f2937;
+      }
+      code {
+        background: #f3f4f6;
+        padding: 0.1em 0.35em;
+        border-radius: 4px;
+      }
+      pre {
+        background: #111827;
+        color: #f9fafb;
+        padding: 1rem;
+        border-radius: 8px;
+        overflow-x: auto;
+      }
+
+      /*
+        Theming from the host page. Custom properties are the only thing that crosses a shadow
+        boundary, which is the whole point: a page can rebrand the panel without knowing a single
+        class name, and equally cannot reach in and break the layout.
+
+        Uncomment to see it take effect over the values the site profile supplied.
+      */
+      /* shopsage-widget {
+        --shopsage-accent: #b91c1c;
+        --shopsage-radius: 4px;
+      } */
+    </style>
+  </head>
+  <body>
+    <h1>Host page</h1>
+
+    <p>
+      This page stands in for a storefront. It contains no assistant code of its own — only the
+      script tag below, which is the entire integration.
+    </p>
+
+    <pre><code>&lt;script src="/shopsage.js"
+        data-backend-url="http://127.0.0.1:4100"
+        data-token-url="http://127.0.0.1:8700/assistant/session"
+        defer&gt;&lt;/script&gt;</code></pre>
+
+    <p>
+      Everything the panel shows about the store — its name, greeting, colours, suggested questions
+      and message ceiling — arrives from <code>GET /v1/config</code> at run time. The same bundle
+      serves any store, and any future platform: nothing in it mentions Magento, and
+      <code>data-token-url</code> is simply wherever <em>this</em> host mints a session token.
+    </p>
+
+    <h2>What to check by hand</h2>
+    <ul>
+      <li>Tab to the launcher and press Enter — focus should land in the input.</li>
+      <li>
+        Press Escape — the panel closes and focus returns to the launcher, not to the page top.
+      </li>
+      <li>Ask something answerable and watch the answer arrive token by token.</li>
+      <li>Ask a follow-up; refresh the page and ask another — the conversation should continue.</li>
+      <li>Narrow the window below 480px — the panel should go full screen.</li>
+      <li>Turn on a screen reader: the answer is announced politely, without interrupting.</li>
+    </ul>
+
+   <script
+  src="/dist/shopsage.js"
+  data-backend-url="http://localhost:3000"
+  defer
+></script>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "name": "@shopsage/scraper",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A website ContentSource: CMS pages, guides, FAQs, blogs and policies. Never products.",
+  "license": "UNLICENSED",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --test test/",
+    "preview": "node src/cli/preview.js"
+  },
+  "dependencies": {
+    "@shopsage/content-model": "*",
+    "@shopsage/platform": "*",
+    "linkedom": "^0.18.13",
+    "undici": "^7.2.0"
+  }
+}

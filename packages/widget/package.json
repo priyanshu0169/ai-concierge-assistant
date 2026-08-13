@@ -1,0 +1,20 @@
+{
+  "name": "@shopsage/widget",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Embeddable assistant widget. Native custom element, no framework, no platform knowledge.",
+  "license": "UNLICENSED",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "build": "node build.js",
+    "test": "node --test test/"
+  }
+}

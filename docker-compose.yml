@@ -1,0 +1,196 @@
+# ---------------------------------------------------------------------------
+# ShopSage - base stack (production-shaped).
+#
+# `docker compose up` also applies docker-compose.override.yml, which switches
+# the backend into development mode. For a production-shaped run, bypass the
+# override explicitly:
+#
+#   docker compose -f docker-compose.yml up --build
+#
+# Deliberately no Compose-level healthchecks on Qdrant or the embeddings
+# service: neither image ships a shell or curl, so a healthcheck would couple
+# this file to image internals. The backend probes both dependencies itself and
+# reports them on GET /health/ready. See docs/adr/0008.
+# ---------------------------------------------------------------------------
+name: shopsage
+
+services:
+  shopsage-backend:
+    container_name: shopsage-backend
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+      target: production
+    # PID 1 that reaps zombies and forwards signals, so SIGTERM reaches Node
+    # and graceful shutdown actually runs.
+    init: true
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # Service-to-service addresses are a property of this network, so they
+      # are set here rather than left to a developer's .env file. Hardcoded, not
+      # `${QDRANT_URL:-...}`: this always wins over whatever .env sets for the same
+      # key, on purpose - it is what lets .env hold the localhost address a bare
+      # `node` process needs (npm run ingest/evaluate/preview/dev) without that
+      # value ever reaching, or needing to agree with, the container. See the
+      # QDRANT_URL comment in env-schema.js and docs/Docker.md.
+      QDRANT_URL: http://shopsage-qdrant:6333
+      REDIS_URL: redis://shopsage-redis:6379
+      SITE_PROFILE_PATH: ./config/site-profile.json
+      # NODE_ENV is production here, so CONVERSATION_STORE has no default and the
+      # backend refuses to guess: `memory` is correct at one replica and silently wrong
+      # at two, and only an operator knows which this is. Redis is running below either
+      # way, so switching is one variable in .env with no extra setup.
+      CONVERSATION_STORE: ${CONVERSATION_STORE:-redis}
+      # The commerce connector. Deliberately **not** defaulted to the reference connector
+      # below: a real deployment points this at the store's Magento module, and a default
+      # that silently answers with fictional products is the worst possible failure mode.
+      # For local work, set it in .env - see the `reference` profile at the end of this file.
+      #
+      # Unlike QDRANT_URL/REDIS_URL above, this is forwarded from .env rather than
+      # overridden - deliberately, for the reason just given - so .env's value has to
+      # match whichever side is actually running the backend: the Docker hostname if
+      # the backend runs here too, `localhost` if it runs bare against a Dockerized
+      # reference connector. See the note in .env.example.
+      MAGENTO_API_URL: ${MAGENTO_API_URL:-}
+      # EMBEDDING_BASE_URL is deliberately *not* set here. Embeddings default to a
+      # hosted OpenAI-compatible endpoint, which is not part of this network - so it
+      # comes from .env like any other external address. When self-hosting instead,
+      # set EMBEDDING_PROVIDER=tei and EMBEDDING_BASE_URL=http://shopsage-embeddings:80
+      # and start the `selfhosted` profile below.
+    ports:
+      - '${BACKEND_PORT:-3000}:3000'
+    depends_on:
+      # Start order only. The backend must survive its dependencies being
+      # unavailable, so it does not wait for them to become healthy.
+      - shopsage-qdrant
+      - shopsage-redis
+
+  # Conversation history. Not behind a profile, unlike the embeddings service: this is a
+  # ~15 MB image that starts instantly, and a durable store should be the easy path rather
+  # than the opt-in one.
+  shopsage-redis:
+    container_name: shopsage-redis
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    # `--appendonly yes` deliberately omitted. Conversations are bounded-lifetime state
+    # that already expires on its own; paying for fsync durability to protect data that
+    # deletes itself within the hour is the wrong trade. A restart loses in-flight
+    # conversations, which is the same outcome as their TTL passing.
+    command:
+      - redis-server
+      - '--save'
+      - ''
+      - '--maxmemory'
+      - '${REDIS_MAXMEMORY:-256mb}'
+      # Conversations carry a TTL, so evicting the ones closest to expiring is the least
+      # harmful thing to do under pressure. `noeviction` would instead fail every write
+      # once memory filled, turning a capacity problem into an outage.
+      - '--maxmemory-policy'
+      - 'volatile-ttl'
+    ports:
+      # Bound to loopback: this is a datastore, not a public endpoint.
+      - '127.0.0.1:${REDIS_PORT:-6379}:6379'
+
+  shopsage-qdrant:
+    container_name: shopsage-qdrant
+    image: qdrant/qdrant:v1.12.4
+    restart: unless-stopped
+    environment:
+      - QDRANT__TELEMETRY_DISABLED=true
+      # Bare name, not `KEY: ${VAR:-}`, and the difference is load-bearing.
+      #
+      # Qdrant enables API-key authentication on the *presence* of this variable,
+      # whatever its value. The mapping form always sets it, so a blank
+      # QDRANT_API_KEY turned authentication on with a key nothing could present:
+      # /readyz kept answering 200 while every data operation returned 401. A
+      # stack that looks healthy and cannot store a vector is the worst kind of
+      # broken, and Stage 3 is the first stage that would have noticed.
+      #
+      # The bare form resolves from .env when set and omits the variable entirely
+      # when it is not, so "no key" and "a key" both work and there is no broken
+      # state in between. Set it together with QDRANT_API_KEY, which is what the
+      # backend presents - the server requires the key, the client sends it.
+      - QDRANT__SERVICE__API_KEY
+    ports:
+      # Bound to loopback: this is a datastore, not a public endpoint.
+      - '127.0.0.1:${QDRANT_HTTP_PORT:-6333}:6333'
+    volumes:
+      - qdrant-storage:/qdrant/storage
+
+  # Optional. Started only with `docker compose --profile selfhosted up`.
+  #
+  # Embeddings default to a hosted OpenAI-compatible endpoint, so this service is not
+  # part of the default stack - running a 2.2 GB model nobody asked for is a poor
+  # first-run experience. It stays a first-class option rather than a legacy one: it is
+  # the answer whenever content may not leave the network, when a multilingual open
+  # model is wanted, or when per-token cost matters more than operating a service.
+  #
+  # Self-hosting means three settings together:
+  #   EMBEDDING_PROVIDER=tei
+  #   EMBEDDING_BASE_URL=http://shopsage-embeddings:80
+  #   EMBEDDING_MODEL / EMBEDDING_DIMENSIONS matching the model below
+  shopsage-embeddings:
+    container_name: shopsage-embeddings
+    image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.8
+    restart: unless-stopped
+    profiles: [selfhosted]
+    # Runs on CPU. The model is configurable so a developer can trade quality for
+    # startup time on a laptop - see docs/Docker.md.
+    command:
+      - '--model-id'
+      - '${SELF_HOSTED_EMBEDDING_MODEL:-BAAI/bge-m3}'
+      - '--port'
+      - '80'
+      - '--auto-truncate'
+    ports:
+      - '127.0.0.1:${EMBEDDINGS_PORT:-8080}:80'
+    volumes:
+      # Model weights are large; cache them so a restart is not a re-download.
+      - embeddings-cache:/data
+
+  # ---------------------------------------------------------------------------
+  # The reference commerce connector. Development and integration only.
+  # ---------------------------------------------------------------------------
+  #
+  # A runnable specification of docs/proposals/0002-commerce-connector-contract.md, serving a
+  # fictional eight-product catalogue. It exists so the Magento module's author has something to
+  # compare against rather than prose to interpret, and so ShopSage's own commerce path can be
+  # exercised without a Magento instance.
+  #
+  # Behind a profile, and it must stay there. It does not verify token signatures - it reads the
+  # subject and trusts it - which is correct for a stand-in and catastrophic anywhere real. Running
+  # it needs two settings together:
+  #   docker compose --profile reference up
+  #   MAGENTO_API_URL=http://shopsage-reference-connector:8750
+  shopsage-reference-connector:
+    container_name: shopsage-reference-connector
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+      target: development
+    init: true
+    profiles: [reference]
+    # `--host 0.0.0.0` is required *inside* a container: the default is loopback, and a container
+    # bound to its own loopback is unreachable from the backend service. Safe here because the port
+    # mapping below is loopback-only on the host - see the note in reference/server.js.
+    command:
+      - 'node'
+      - 'packages/magento-client/reference/server.js'
+      - '--port'
+      - '8750'
+      - '--host'
+      - '0.0.0.0'
+    volumes:
+      - ./packages:/app/packages
+    ports:
+      # Bound to localhost. Nothing about this should be reachable from another machine.
+      - '127.0.0.1:${REFERENCE_CONNECTOR_PORT:-8750}:8750'
+
+volumes:
+  qdrant-storage:
+  embeddings-cache:
