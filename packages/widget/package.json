@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "build": "node build.js",
+    "demo": "node build.js && node serve-demo.js",
     "test": "node --test test/"
   }
 }
